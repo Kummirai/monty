@@ -32,5 +32,6 @@ typedef struct instruction_s
 
 void push(int x);
 void pall(void);
+void pop(void);
 
 #endif

@@ -59,4 +59,15 @@ void pall(void)
 		}
 	}
 }
-        
+
+/**
+ * pop - function that delertes/removes the top element
+ */
+void pop(void)
+{
+	stack_t *temp;
+
+	temp = top;
+	top = top->next;
+	free(temp);
+}
