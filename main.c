@@ -1,73 +1,128 @@
+#include "monty.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "monty.h"
-#include <ctype.h>
 
-stack_t *top = 0;
+/* Initialize the global variable */
+int token = 1;
 
 /**
- * main - main function
+ * main - Interprets bytecode
+ * @argc: number of arguments
+ * @argv: array of arguments
  * Return: 0 on success
  */
-int main(void)
+int main(int argc, char **argv)
 {
-	push(1);
-	push(2);
-	push(3);
-	pall();
-	return (0);
-}
+	const char *filename;
+	char *string = NULL, *opcode, *num_str;
+	size_t nbytes = 1;
+	FILE *file;
+	unsigned int line_num = 0, i = 0;
+	ssize_t read_c = 0;
+	stack_t *stack;
 
-/**
- * push - function that pushes elements to the stack
- * @x: element to be pushed to stack
- */
-void push(int n)
-{
-        stack_t *new_node;
-
-        new_node = (stack_t*)malloc(sizeof(stack_t));
-	if(!new_node)
+	stack = NULL;
+	if (argc != 2)
 	{
-		printf("Stack overflow");
-		exit(1);
+		fprintf(stderr, "USAGE: monty file\n");
+		exit(EXIT_FAILURE);
 	}
-        new_node->n = n;
-        new_node->next = top;
-        top = new_node;
-}
 
-/**
- * pall - function that print elements on stack
- */
-void pall(void)
-{
-        stack_t *temp;
+	filename = argv[1];
 
-        if(top == NULL)
-        {
-                printf("Stack underflow");
-		exit(1);
-        }
-	else
+	/* Open File with the bytecodes */
+	file = fopen(filename, "r");
+	if (file == NULL)
 	{
-		temp = top;
-		while (temp)
+		fprintf(stderr, "Error: Can't open file %s\n", filename);
+		exit(EXIT_FAILURE);
+	}
+
+	/* Read file line by line */
+	while (read_c != EOF)
+	{
+		token = 1;
+		i = 0;
+		if (string != NULL)
+			free(string);
+		string = NULL;
+
+		read_c = getline(&string, &nbytes, file);
+
+		if (read_c == -1)
 		{
-			printf("%d\n", temp->n);
-			temp = temp->next;
+			free(string);
+			if (stack != NULL)
+				free_stack(&stack);
+			fclose(file);
+			return (0);
 		}
+
+		/* Keep count of the number of lines */
+		line_num++;
+
+		/* Continue if line or string is NULL */
+		if (read_c == 0)
+			continue;
+
+		/* Continue if line had only the new line character */
+		if (read_c == 1)
+			continue;
+
+		/* Parse the first elements of the line */
+		opcode = strtok(string, " \n");
+
+		/* If string is empty, let's continue */
+		if (opcode == NULL)
+			continue;
+
+		if (opcode[0] == '#')
+		{
+			nop(&stack, line_num);
+			continue;
+		}
+
+		/* Check whether the first token is the opcode 'push' */
+		if (strcmp(opcode, "push") == 0)
+		{
+			num_str = strtok(NULL, " \n");
+
+			/* Check if token is a digit or NULL */
+			if (num_str == NULL)
+			{
+				fprintf(stderr, "L%d: usage: push integer\n",
+					line_num);
+				free(string);
+				free_stack(&stack);
+				fclose(file);
+				exit(EXIT_FAILURE);
+			}
+
+			if (num_str[0] == '-' && num_str[1] != '\0')
+				i = 1;
+			/* Make sure string isn't garbage */
+			for (; num_str[i] != '\0'; i++)
+			{
+				if (isdigit(num_str[i]) == 0)
+				{
+					fprintf(stderr,
+						"L%d: usage: push integer\n",
+						line_num);
+					free(string);
+					free_stack(&stack);
+					fclose(file);
+					exit(EXIT_FAILURE);
+				}
+			}
+
+			token = atoi(num_str);
+		}
+		op_func(opcode, &stack, line_num)(&stack, line_num);
 	}
-}
+	/* Free memory and close the file */
+	free(string);
+	free_stack(&stack);
+	fclose(file);
 
-/**
- * pop - function that delertes/removes the top element
- */
-void pop(void)
-{
-	stack_t *temp;
-
-	temp = top;
-	top = top->next;
-	free(temp);
+	return (0);
 }
