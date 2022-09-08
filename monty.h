@@ -11,11 +11,6 @@
 #include <string.h>
 #include <ctype.h>
 
-/* Declaration of the global variables */
-extern int token;
-
-/* Structures */
-
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
@@ -45,13 +40,5 @@ typedef struct instruction_s
 	char *opcode;
 	stack_t *(*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
-
-
-/* Prototypes */
-stack_t *push(stack_t **stack, unsigned int line_number);
-stack_t *pall(stack_t **stack, unsigned int line_number);
-stack_t *pint(stack_t **stack, unsigned int line_number);
-stack_t *pop(stack_t **stack, unsigned int line_number);
-stack_t *swap(stack_t **stack, unsigned int line_number);
 
 #endif /* _MONTY_H_ */
