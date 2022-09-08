@@ -53,18 +53,5 @@ stack_t *pall(stack_t **stack, unsigned int line_number);
 stack_t *pint(stack_t **stack, unsigned int line_number);
 stack_t *pop(stack_t **stack, unsigned int line_number);
 stack_t *swap(stack_t **stack, unsigned int line_number);
-void free_stack(stack_t **stack);
-stack_t *(*op_func(char *s, stack_t **stack,
-		   unsigned int line_number))(stack_t **stack,
-					      unsigned int line_number);
-stack_t *add(stack_t **stack, unsigned int line_number);
-stack_t *sub(stack_t **stack, unsigned int line_number);
-stack_t *nop(stack_t **stack, unsigned int line_number);
-stack_t *mod(stack_t **stack, unsigned int line_number);
-stack_t *div_op(stack_t **stack, unsigned int line_number);
-stack_t *mul_op(stack_t **stack, unsigned int line_num);
-stack_t *pchar(stack_t **stack, unsigned int line_num);
-stack_t *pstr(stack_t **stack, unsigned int line_number);
-stack_t *rotl(stack_t **stack, unsigned int line_number);
 
 #endif /* _MONTY_H_ */
