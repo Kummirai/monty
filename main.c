@@ -24,7 +24,6 @@ int main(void)
  */
 void push(int n)
 {
-	if
         stack_t *new_node;
 
         new_node = (stack_t*)malloc(sizeof(stack_t));
