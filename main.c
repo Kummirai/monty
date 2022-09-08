@@ -34,7 +34,6 @@ void push(int n)
 		exit(1);
 	}
         new_node->n = n;
-	new_node->prev = NULL;
         new_node->next = top;
         top = new_node;
 }
